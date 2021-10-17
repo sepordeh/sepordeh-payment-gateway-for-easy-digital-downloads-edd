@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: Sepordeh for Easy Digital Downloads (EDD)
+ * Plugin Name: Sepordeh Payment Gateway for Easy Digital Downloads (EDD)
  * Author: Sepordeh
  * Description: This plugin activate <a href="https://Sepordeh.com">Sepordeh</a> payment method in EDD
  * Version: 3.0.0
