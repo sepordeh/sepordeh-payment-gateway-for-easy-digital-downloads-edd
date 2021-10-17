@@ -3,7 +3,6 @@
  * Sepordeh Gateway for Easy Digital Downloads
  *
  * @author 				sepordeh.com
- * @package 			EZP
  * @subpackage 			Gateways
  */
 if ( ! defined( 'ABSPATH' ) ) exit;
@@ -14,7 +13,6 @@ if ( ! class_exists( 'EDD_Sepordeh_Gateway' ) ) :
  * Sepordeh Gateway for Easy Digital Downloads
  *
  * @author 				sepordeh.com
- * @package 			EZP
  * @subpackage 			Gateways
  */
 class EDD_Sepordeh_Gateway {
@@ -97,31 +95,33 @@ class EDD_Sepordeh_Gateway {
 		
 
 			$url='https://sepordeh.com/merchant/invoices/add';
-		$params=array(
-		'merchant'          => $merchant,
-		'amount'       => $amount,
-		'callback'     => $callback,
-		'orderId' => time(),
-		'description'  => $desc,
-	);
-	$ch = curl_init();
-	curl_setopt($ch, CURLOPT_URL, $url);
-	curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
-	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-	$result = curl_exec($ch);
-	curl_close($ch);
-			$err = curl_error( $ch );
-			if ( $err ) {
-				edd_insert_payment_note( $payment, 'کد خطا: CURL#' . $err );
-				edd_update_payment_status( $payment, 'failed' );
-				edd_set_error( 'sepordeh_connect_error', 'در اتصال به درگاه مشکلی پیش آمد.' );
-				edd_send_back_to_checkout();
-				return false;
+			$data=array(
+				'merchant'          => $merchant,
+				'amount'       => $amount,
+				'callback'     => $callback,
+				'orderId' => time(),
+				'description'  => $desc,
+			);
+			
+			$args = array(
+				'timeout' => 20,
+				'body' => $data,
+				'httpversion' => '1.1',
+				'user-agent' => 'Official Sepordeh EDD Plugin'
+			);
+			
+			$number_of_connection_tries = 4;
+			while ($number_of_connection_tries) {
+				$response = wp_safe_remote_post($url, $args);
+				if (is_wp_error($response)) {
+					$number_of_connection_tries--;
+					continue;
+				} else {
+					break;
+				}
 			}
 
-			$result = json_decode( $result);
+			$result = json_decode($response["body"]);
 			curl_close( $ch );
 
 			if ($result->status==200) {
@@ -150,7 +150,6 @@ class EDD_Sepordeh_Gateway {
 	 */
 	public function verify() {
 		global $edd_options;
-
 		if ( isset( $_GET['authority'] ) ) {
 			$authority = sanitize_text_field( $_GET['authority'] );
 
@@ -175,20 +174,29 @@ class EDD_Sepordeh_Gateway {
 			$merchant = ( isset( $edd_options[ $this->keyname . '_merchant' ] ) ? $edd_options[ $this->keyname . '_merchant' ] : '' );
 
 			
-$url='https://sepordeh.com/merchant/invoices/verify';
-$params= [
-		'merchant' 	=> $merchant,
-		'authority' => $authority,
-	];
-	$ch = curl_init();
-	curl_setopt($ch, CURLOPT_URL, $url);
-	curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
-	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-	$res = curl_exec($ch);
-	curl_close($ch);
-$result = json_decode($res);
+			$url ='https://sepordeh.com/merchant/invoices/verify';
+			$data = [
+				'merchant' 	=> $merchant,
+				'authority' => $authority,
+			];
+			$args = array(
+				'timeout' => 20,
+				'body' => $data,
+				'httpversion' => '1.1',
+				'user-agent' => 'Official Sepordeh EDD Plugin'
+			);
+			$number_of_connection_tries = 4;
+			while ($number_of_connection_tries) {
+				$response = wp_safe_remote_post($url, $args);
+				if (is_wp_error($response)) {
+					$number_of_connection_tries--;
+					continue;
+				} else {
+					break;
+				}
+			}
+
+			$result = json_decode($response["body"]);
 			edd_empty_cart();
 
 			if ( version_compare( EDD_VERSION, '2.1', '>=' ) ) {
@@ -218,7 +226,7 @@ $result = json_decode($res);
 	public function receipt( $payment ) {
 		$refid = edd_get_payment_meta( $payment->ID, 'sepordeh_refid' );
 		if ( $refid ) {
-			echo '<tr class="sepordeh-ref-id-row ezp-field ehsaan-dev"><td><strong>شماره تراکنش بانکی:</strong></td><td>' . $refid . '</td></tr>';
+			echo '<tr class="sepordeh-ref-id-row ezp-field sepordeh"><td><strong>شماره تراکنش بانکی:</strong></td><td>' . $refid . '</td></tr>';
 		}
 	}
 
@@ -233,20 +241,13 @@ $result = json_decode($res);
 			$this->keyname . '_header' 		=>	array(
 				'id' 			=>	$this->keyname . '_header',
 				'type' 			=>	'header',
-				'name' 			=>	'<strong>درگاه سپرده‌</strong> توسط <a href="https://ehsaan.dev" target="_blank">ehsaan</a>'
+				'name' 			=>	'<strong>درگاه سپرده‌</strong> توسط <a href="https://sepordeh.com" target="_blank">sepordeh</a>'
 			),
 			$this->keyname . '_merchant' 		=>	array(
 				'id' 			=>	$this->keyname . '_merchant',
-				'name' 			=>	'مرچنت‌کد',
+				'name' 			=>	'مرچنت کد',
 				'type' 			=>	'text',
 				'size' 			=>	'regular'
-			),
-			$this->keyname . '_ip' 		=>	array(
-				'id' 			=>	$this->keyname . '_ip',
-				'name' 			=>	'آی‌پی سرور شما',
-				'type' 			=>	'text',
-				'readonly' 		=>	true,
-				'std' 			=>	$_SERVER['SERVER_ADDR']
 			),
 			$this->keyname . '_label' 	=>	array(
 				'id' 			=>	$this->keyname . '_label',
@@ -306,73 +307,6 @@ $result = json_decode($res);
 		}
 	}
 
-	/**
-	 * Error reason for sepordeh
-	 *
-	 * @param 			int $error_id
-	 * @return 			string
-	 */
-
-	public function error_reason( $error_id ) {
-		$message = 'خطای ناشناخته';
-
-		switch ( $error_id ) {
-			case '-1':
-				$message = 'اطلاعات ارسال شده ناقص است';
-				break;
-			case '-2':
-				$message = 'IP -2و يا مرچنت كد پذيرنده صحيح نيست.';
-				break;
-			case '-3':
-				$message = 'با توجه به محدوديت هاي شاپرك امكان پرداخت با رقم درخواست شده ميسر نمي باشد';
-				break;
-			case '-4':
-				$message = 'سطح تاييد پذيرنده پايين تر از سطح نقره اي است.';
-				break;
-			case '-11':
-				$message = 'درخواست مورد نظر يافت نشد.';
-				break;
-			case '-12':
-				$message = 'امكان ويرايش درخواست ميسر نمي باشد';
-				break;
-			case '-21':
-				$message = 'هيچ نوع عمليات مالي براي اين تراكنش يافت نشد.';
-				break;
-			case '-22':
-				$message = 'هيچ نوع عمليات مالي براي اين تراكنش يافت نشد.';
-				break;
-			case '-33':
-				$message = 'رقم تراكنش با رقم پرداخت شده مطابقت ندارد.';
-				break;
-			case '-34':
-				$message = 'سقف تقسيم تراكنش از لحاظ تعداد يا رقم عبور نموده است';
-				break;
-			case '-40':
-				$message = 'اجازه دسترسي به متد مربوطه وجود ندارد.';
-				break;
-			case '-41':
-				$message = 'اطلاعات ارسال شده مربوط به  AdditionalDataغيرمعتبر ميباشد.';
-				break;
-			case '-42':
-				$message = 'مدت زمان معتبر طول عمر شناسه پرداخت بايد بين  30دقيه تا  45روز مي باشد.';
-				break;
-			case '-54':
-				$message = 'درخواست مورد نظر آرشيو شده است.';
-				break;
-			case '100':
-				$message = 'عمليات با موفقيت انجام گرديده است';
-				break;
-			case '101':
-				$message = 'عمليات پرداخت موفق بوده و قبلا  PaymentVerificationتراكنش انجام شده است.';
-			break;
-			case '102':
-				$message = 'تراکنش توسط کاربر لغو شد.';
-			break;
-		}
-
-		return $message;
-
-	}
 }
 
 endif;
