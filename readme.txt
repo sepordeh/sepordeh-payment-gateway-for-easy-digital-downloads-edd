@@ -3,8 +3,9 @@ Contributors: sepordeh
 Tags: Easy Digital Downloads,edd,payment,sepordeh,payment gateway,سپرده,درگاه پرداخت edd,درگاه پرداخت سپرده
 Requires at least: 4.7
 Tested up to: 5.8
-Stable tag: 5.8
+Stable tag: 3.0.0
 Requires PHP: 7.0
+Plugin URI: https://wordpress.org/plugins/edd-sepordeh
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
