@@ -8,7 +8,8 @@ Requires at least: 4.7
 
 Tested up to: 5.8
 
-Stable tag: 5.8
+Stable tag: 3.0.0
+
 Requires PHP: 7.0
 
 License: GPLv2 or later
