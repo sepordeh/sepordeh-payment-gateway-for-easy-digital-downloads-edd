@@ -165,7 +165,7 @@ class EDD_Sepordeh_Gateway {
 				$amount = $amount * 10;
 			}
 
-			$merchant = ( isset( $edd_options[ $this->keyname . '_merchant' ] ) ? $edd_options[ $this->keyname . '_merchant' ] : '' );
+			$merchant = ( isset( $edd_options[ $this->keyname . '_merchant' ] ) ? sanitize_text_field($edd_options[ $this->keyname . '_merchant' ]) : '' );
 
 			
 			$url ='https://sepordeh.com/merchant/invoices/verify';
