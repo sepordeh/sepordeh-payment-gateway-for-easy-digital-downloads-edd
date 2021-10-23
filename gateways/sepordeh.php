@@ -9,12 +9,6 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 if ( ! class_exists( 'EDD_Sepordeh_Gateway' ) ) :
 
-/**
- * Sepordeh Gateway for Easy Digital Downloads
- *
- * @author 				sepordeh.com
- * @subpackage 			Gateways
- */
 class EDD_Sepordeh_Gateway {
 	/**
 	 * Gateway keyname
@@ -204,7 +198,7 @@ class EDD_Sepordeh_Gateway {
 			}
 
 			if ( $result->status==200) {
-				edd_insert_payment_note( $payment->ID, 'شماره تراکنش بانکی: ' . $result->information->invoice_id );
+				edd_insert_payment_note( $payment->ID, 'شماره تراکنش بانکی: ' . esc_html($result->information->invoice_id) );
 				edd_update_payment_meta( $payment->ID, 'sepordeh_refid', $result->information->invoice_id );
 				edd_update_payment_status( $payment->ID, 'publish' );
 				edd_send_to_success_page();
@@ -226,7 +220,7 @@ class EDD_Sepordeh_Gateway {
 	public function receipt( $payment ) {
 		$refid = edd_get_payment_meta( $payment->ID, 'sepordeh_refid' );
 		if ( $refid ) {
-			echo '<tr class="sepordeh-ref-id-row ezp-field sepordeh"><td><strong>شماره تراکنش بانکی:</strong></td><td>' . $refid . '</td></tr>';
+			echo '<tr class="sepordeh-ref-id-row ezp-field sepordeh"><td><strong>شماره تراکنش بانکی:</strong></td><td>' . esc_html($refid) . '</td></tr>';
 		}
 	}
 
