@@ -78,7 +78,7 @@ class EDD_Sepordeh_Gateway {
 
 			
 			$merchant = ( isset( $edd_options[ $this->keyname . '_merchant' ] ) ? $edd_options[ $this->keyname . '_merchant' ] : '' );
-			$desc = 'پرداخت شماره #' . $payment.' | '.$purchase_data['user_info']['first_name'].' '.$purchase_data['user_info']['last_name'];
+			$desc = 'پرداخت شماره #' . esc_html($payment.' | '.$purchase_data['user_info']['first_name'].' '.$purchase_data['user_info']['last_name']);
 			$callback = add_query_arg( 'verify_' . $this->keyname, '1', get_permalink( $edd_options['success_page'] ) );
 
 			$amount = intval( $purchase_data['price'] ) / 10;
@@ -119,17 +119,17 @@ class EDD_Sepordeh_Gateway {
 			curl_close( $ch );
 
 			if ($result->status==200) {
-				edd_insert_payment_note( $payment, 'کد تراکنش sepordeh ‌: ' . $result->information->invoice_id );
-				edd_update_payment_meta( $payment, 'sepordeh_authority', $result->information->invoice_id );
+				edd_insert_payment_note( $payment, 'کد تراکنش sepordeh ‌: ' . esc_html($result->information->invoice_id) );
+				edd_update_payment_meta( $payment, 'sepordeh_authority', esc_html($result->information->invoice_id) );
 				$_SESSION['sp_payment'] = $payment;
 
 				wp_redirect( "https://sepordeh.com/merchant/invoices/pay/automatic:true/id:".$result->information->invoice_id );
 			} else {
-				edd_insert_payment_note( $payment, 'کد خطا: ' . $result->status );
-				edd_insert_payment_note( $payment, 'علت خطا: ' . $result->status );
+				edd_insert_payment_note( $payment, 'کد خطا: ' . esc_html($result->status) );
+				edd_insert_payment_note( $payment, 'علت خطا: ' . esc_html($result->status) );
 				edd_update_payment_status( $payment, 'failed' );
 
-				edd_set_error( 'sepordeh_connect_error', 'در اتصال به درگاه مشکلی پیش آمد. علت: ' . $result->status );
+				edd_set_error( 'sepordeh_connect_error', 'در اتصال به درگاه مشکلی پیش آمد. علت: ' . esc_html($result->status) );
 				edd_send_back_to_checkout();
 			}
 		} else {
@@ -199,7 +199,7 @@ class EDD_Sepordeh_Gateway {
 
 			if ( $result->status==200) {
 				edd_insert_payment_note( $payment->ID, 'شماره تراکنش بانکی: ' . esc_html($result->information->invoice_id) );
-				edd_update_payment_meta( $payment->ID, 'sepordeh_refid', $result->information->invoice_id );
+				edd_update_payment_meta( $payment->ID, 'sepordeh_refid', esc_html($result->information->invoice_id));
 				edd_update_payment_status( $payment->ID, 'publish' );
 				edd_send_to_success_page();
 			} else {
