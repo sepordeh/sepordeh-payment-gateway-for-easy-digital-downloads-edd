@@ -12,7 +12,7 @@ Stable tag: 3.0.0
 
 Requires PHP: 5.0
 
-Plugin URI: https://wordpress.org/plugins/edd-sepordeh
+Plugin URI: https://wordpress.org/plugins/sepordeh-payment-gateway-for-easy-digital-downloads-edd
 
 License: GPLv2 or later
 
