@@ -3,7 +3,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Sepordeh payment gateway for Easy Digital Downloads (EDD) 3.0.0\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/edd-sepordeh\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/sepordeh-payment-gateway-for-easy-digital-downloads-edd\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -12,7 +12,7 @@ msgstr ""
 "POT-Creation-Date: 2021-05-08T07:36:36+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.2.0\n"
-"X-Domain: edd-sepordeh\n"
+"X-Domain: sepordeh-payment-gateway-for-easy-digital-downloads-edd\n"
 
 #. Plugin Name of the plugin
 msgid "Sepordeh payment gateway for Easy Digital Downloads (EDD)"
