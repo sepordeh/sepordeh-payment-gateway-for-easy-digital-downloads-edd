@@ -5,7 +5,7 @@ Requires at least: 4.7
 Tested up to: 5.8
 Stable tag: 3.0.0
 Requires PHP: 5.0
-Plugin URI: https://wordpress.org/plugins/edd-sepordeh
+Plugin URI: https://wordpress.org/plugins/sepordeh-payment-gateway-for-easy-digital-downloads-edd
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
